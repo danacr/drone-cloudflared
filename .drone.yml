@@ -11,7 +11,8 @@ steps:
   commands:
   - go get github.com/cloudflare/cloudflared/cmd/cloudflared
   - go build github.com/cloudflare/cloudflared/cmd/cloudflared
-  - tar -cf cloudflare-arm64.tar.gz /go/src/github.com/cloudflare/cloudflared/cmd/cloudflared/cloudflared
+  - pwd
+  # - tar -cf cloudflare-arm64.tar.gz /go/src/github.com/cloudflare/cloudflared/cmd/cloudflared/cloudflared
 
 - name: publish
   image: plugins/github-release
@@ -19,6 +20,7 @@ steps:
     api_key: 
       from_secret: GITHUB
     title: cloudflared-arm64
-    files: cloudflare-arm64.tar.gz
+    # files: cloudflare-arm64.tar.gz
+    files: github.com/cloudflare/cloudflared/cmd/cloudflared/cloudflared
   when:
     event: tag
