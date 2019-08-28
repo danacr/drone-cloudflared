@@ -1,0 +1,17 @@
+kind: pipeline
+name: arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+workspace:
+  base: /go
+  path: src/github.com/danacr/cloudflared/cmd/cloudflared
+
+steps:
+- name: build
+  image: golang
+  commands:
+  - go get
+  - go build
