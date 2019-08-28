@@ -5,13 +5,16 @@ platform:
   os: linux
   arch: arm64
 
-# workspace:
-#   base: /go
-#   path: src/github.com/danacr/cloudflared/cmd/cloudflared
-
 steps:
 - name: build
   image: golang
   commands:
   - go get github.com/cloudflare/cloudflared/cmd/cloudflared
   - go build github.com/cloudflare/cloudflared/cmd/cloudflared
+
+- name: publish
+  image: plugins/github-release
+  settings:
+    api_key: $GITHUB
+    title: cloudflared-arm64
+    files: /go/src/github.com/cloudflare/cloudflared/cmd/cloudflared/cloudflared
