@@ -18,5 +18,3 @@ steps:
     api_key: $GITHUB
     title: cloudflared-arm64
     files: /go/src/github.com/cloudflare/cloudflared/cmd/cloudflared/cloudflared
-  when:
-    event: tag
