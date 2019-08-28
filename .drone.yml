@@ -5,13 +5,13 @@ platform:
   os: linux
   arch: arm64
 
-workspace:
-  base: /go
-  path: src/github.com/danacr/cloudflared/cmd/cloudflared
+# workspace:
+#   base: /go
+#   path: src/github.com/danacr/cloudflared/cmd/cloudflared
 
 steps:
 - name: build
   image: golang
   commands:
-  - go get
-  - go build
+  - go get github.com/cloudflare/cloudflared/cmd/cloudflared
+  - go build github.com/cloudflare/cloudflared/cmd/cloudflared
