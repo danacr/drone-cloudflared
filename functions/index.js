@@ -100,7 +100,7 @@ async function tag(url, version) {
     tag: version,
     message: version,
     object: sha,
-    type: "commit"
+    type: "tree"
   };
   console.log(data);
   try {
@@ -128,28 +128,41 @@ async function reference(url, object, version) {
 // exports.compare = functions.pubsub
 //   .schedule("every day 00:00")
 //   .onRun(async context => {
-if (await compare()) {
-  version = await getLatest(cloudflare);
-  await replaceReadMe(version);
-  console.log("time to update");
-  await updateReadMe(readme, version);
-  await tag(readme, version);
-} else {
-  console.log("nevermind...");
-}
+//     if (await compare()) {
+//       version = await getLatest(cloudflare);
+//       await replaceReadMe(version);
+//       console.log("time to update");
+//       await updateReadMe(readme, version);
+//       await tag(readme, version);
+//     } else {
+//       console.log("nevermind...");
+//     }
 //   });
 
 async function main() {
-  // if (await compare()) {
-  //   version = await getLatest(cloudflare);
-  //   await replaceReadMe(version);
-  //   console.log("time to update");
-  //   await updateReadMe(readme, version);
-  //   refobject = await tag(readme, version);
-  //   console.log(refobject);
-  //   await reference(referenceurl, refobject, version);
-  // } else {
-  //   console.log("nevermind...");
-  // }
+  if (await compare()) {
+    version = await getLatest(cloudflare);
+    await replaceReadMe(version);
+    console.log("time to update");
+    await updateReadMe(readme, version);
+    refobject = await tag(readme, version);
+    console.log(refobject);
+    await reference(referenceurl, refobject, version);
+  } else {
+    console.log("nevermind...");
+  }
 }
 main();
+
+// async function deleteref() {
+//   console.log("deleting reference");
+//   try {
+//     await axios.delete(
+//       "https://api.github.com/repos/danacr/drone-cloudflared/git/refs/tags/2019.9.0",
+//       config
+//     );
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+// deleteref();
