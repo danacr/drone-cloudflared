@@ -12,7 +12,7 @@ cloudflare = "cloudflare/cloudflared/tags";
 github = "https://api.github.com/repos/";
 readme = github + "danacr/drone-cloudflared/contents/README.md";
 tagme = github + "danacr/drone-cloudflared/git/tags";
-referenceurl = github + "danacr/drone-cloudflared/git/refs";
+referenceurl = github + "danacr/drone-cloudflared/git/refs/";
 
 var config = {
   headers: { Authorization: "bearer " + accessToken }
@@ -49,13 +49,13 @@ async function updateReadMe(url, version) {
   file = base64_encode("README.md");
   console.log("getting sha");
   sha = await getsha(url);
-  console.log("ready");
+  console.log("ready to update");
   data = {
     message: version,
     content: file,
     sha: sha
   };
-  console.log(data);
+  // console.log(data);
 
   try {
     await axios.put(url, data, config);
@@ -93,66 +93,30 @@ async function replaceReadMe(version) {
   }
 }
 
-async function tag(url, version) {
-  sha = await getsha(url);
-  console.log("ready");
-  data = {
-    tag: version,
-    message: version,
-    object: sha,
-    type: "tree"
-  };
-  console.log(data);
-  try {
-    result = await axios.post(tagme, data, config);
-    return result.data.object.sha;
-  } catch (error) {
-    console.error(error);
-  }
-}
+exports.compare = functions.pubsub
+  .schedule("every day 00:00")
+  .onRun(async context => {
+    if (await compare()) {
+      version = await getLatest(cloudflare);
+      await replaceReadMe(version);
+      console.log("time to update");
+      await updateReadMe(readme, version);
+    } else {
+      console.log("nevermind...");
+    }
+  });
 
-async function reference(url, object, version) {
-  console.log("ready");
-  data = {
-    ref: "refs/tags/" + version,
-    sha: object
-  };
-  console.log(data);
-  try {
-    await axios.post(url, data, config);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// exports.compare = functions.pubsub
-//   .schedule("every day 00:00")
-//   .onRun(async context => {
-//     if (await compare()) {
-//       version = await getLatest(cloudflare);
-//       await replaceReadMe(version);
-//       console.log("time to update");
-//       await updateReadMe(readme, version);
-//       await tag(readme, version);
-//     } else {
-//       console.log("nevermind...");
-//     }
-//   });
-
-async function main() {
-  if (await compare()) {
-    version = await getLatest(cloudflare);
-    await replaceReadMe(version);
-    console.log("time to update");
-    await updateReadMe(readme, version);
-    refobject = await tag(readme, version);
-    console.log(refobject);
-    await reference(referenceurl, refobject, version);
-  } else {
-    console.log("nevermind...");
-  }
-}
-main();
+// async function main() {
+//   if (await compare()) {
+//     version = await getLatest(cloudflare);
+//     await replaceReadMe(version);
+//     console.log("time to update");
+//     await updateReadMe(readme, version);
+//   } else {
+//     console.log("nevermind...");
+//   }
+// }
+// main();
 
 // async function deleteref() {
 //   console.log("deleting reference");
