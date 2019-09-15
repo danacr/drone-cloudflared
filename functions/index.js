@@ -93,30 +93,30 @@ async function replaceReadMe(version) {
   }
 }
 
-exports.compare = functions.pubsub
-  .schedule("every day 00:00")
-  .onRun(async context => {
-    if (await compare()) {
-      version = await getLatest(cloudflare);
-      await replaceReadMe(version);
-      console.log("time to update");
-      await updateReadMe(readme, version);
-    } else {
-      console.log("nevermind...");
-    }
-  });
+// exports.compare = functions.pubsub
+//   .schedule("every day 00:00")
+//   .onRun(async context => {
+//     if (await compare()) {
+//       version = await getLatest(cloudflare);
+//       await replaceReadMe(version);
+//       console.log("time to update");
+//       await updateReadMe(readme, version);
+//     } else {
+//       console.log("nevermind...");
+//     }
+//   });
 
-// async function main() {
-//   if (await compare()) {
-//     version = await getLatest(cloudflare);
-//     await replaceReadMe(version);
-//     console.log("time to update");
-//     await updateReadMe(readme, version);
-//   } else {
-//     console.log("nevermind...");
-//   }
-// }
-// main();
+async function main() {
+  if (await compare()) {
+    version = await getLatest(cloudflare);
+    await replaceReadMe(version);
+    console.log("time to update");
+    await updateReadMe(readme, version);
+  } else {
+    console.log("nevermind...");
+  }
+}
+main();
 
 // async function deleteref() {
 //   console.log("deleting reference");
