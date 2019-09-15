@@ -6,20 +6,20 @@ platform:
   arch: arm64
 
 steps:
-- name: build
-  image: golang
-  commands:
-  - go get github.com/cloudflare/cloudflared/cmd/cloudflared
-  - go build github.com/cloudflare/cloudflared/cmd/cloudflared
-  - cp /go/bin/cloudflared .
-  - tar -cf cloudflared-arm64.tar.gz cloudflared
+  - name: build
+    image: golang
+    commands:
+      - go get github.com/cloudflare/cloudflared/cmd/cloudflared
+      - go build github.com/cloudflare/cloudflared/cmd/cloudflared
+      - cp /go/bin/cloudflared .
+      - tar -cf cloudflared-arm64-${DRONE_COMMIT_MESSAGE}.tar.gz cloudflared
 
-- name: publish
-  image: plugins/github-release
-  settings:
-    api_key: 
-      from_secret: GITHUB
-    title: cloudflared-arm64
-    files: cloudflared-arm64.tar.gz
-  when:
-    event: tag
+  - name: publish
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: GITHUB
+      title: ${DRONE_COMMIT_MESSAGE}
+      files: cloudflared-arm64-${DRONE_COMMIT_MESSAGE}.tar.gz
+    when:
+      event: tag
