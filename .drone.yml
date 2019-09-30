@@ -6,11 +6,27 @@ platform:
   arch: arm64
 
 steps:
-- name: docker  
-  image: plugins/docker
-  settings:
-    username: danacr
-    password:
-      from_secret: GITHUB
-    repo: danacr/dashboard-metrics-scraper
-    tags: arm64
+  - name: build
+    image: golang
+    commands:
+      - go get github.com/cloudflare/cloudflared/cmd/cloudflared
+      - go build github.com/cloudflare/cloudflared/cmd/cloudflared
+      - cp /go/bin/cloudflared .
+      - tar -cf cloudflared-arm64-${DRONE_COMMIT_MESSAGE}.tar.gz cloudflared
+
+  - name: tag
+    image: docker:git # this image has git installed
+    tag:
+      commands:
+        - git tag v{DRONE_COMMIT_MESSAGE}
+        - git push origin v{DRONE_COMMIT_MESSAGE}
+
+  - name: publish
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: GITHUB
+      title: ${DRONE_COMMIT_MESSAGE}
+      files: cloudflared-arm64-${DRONE_COMMIT_MESSAGE}.tar.gz
+    when:
+      event: tag
