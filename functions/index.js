@@ -5,10 +5,9 @@ const replace = require("replace-in-file");
 const fs = require("fs");
 
 // accessToken = functions.config().git.key;
-
 accessToken = process.argv.slice(2);
 
-dan = "danacr/drone-cloudflared/tags";
+dan = "danacr/drone-cloudflared/commits";
 cloudflare = "cloudflare/cloudflared/tags";
 github = "https://api.github.com/repos/";
 readme = github + "danacr/drone-cloudflared/contents/README.md";
@@ -27,9 +26,17 @@ function base64_encode(file) {
   return new Buffer.from(bitmap).toString("base64");
 }
 
-async function getLatest(url) {
+async function getLatestDan() {
   try {
-    result = await axios(github + url);
+    result = await axios(github + dan);
+    return result.data[0].commit.message;
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function getLatestCF() {
+  try {
+    result = await axios(github + cloudflare);
     return result.data[0].name;
   } catch (error) {
     console.error(error);
@@ -66,7 +73,7 @@ async function updateReadMe(url, version) {
 }
 
 const compare = async () => {
-  if ((await getLatest(dan)) != (await getLatest(cloudflare))) {
+  if ((await getLatestDan()) != (await getLatestCF())) {
     console.log("different");
     return true;
   } else {
@@ -74,7 +81,7 @@ const compare = async () => {
       "Version sync OK, time: ",
       new Date().getTime(),
       " version: ",
-      await getLatest(dan)
+      await getLatestDan()
     );
     return false;
   }
@@ -94,8 +101,9 @@ async function replaceReadMe(version) {
   }
 }
 
-// exports.compare = functions.pubsub
-//   .schedule("every day 00:00")
+// exports.compare = functions
+//   .region("europe-west1")
+//   .pubsub.schedule("every 5 minutes")
 //   .onRun(async context => {
 //     if (await compare()) {
 //       version = await getLatest(cloudflare);
@@ -107,6 +115,7 @@ async function replaceReadMe(version) {
 //     }
 //   });
 
+// old way of running things
 async function main() {
   if (await compare()) {
     version = await getLatest(cloudflare);
@@ -118,16 +127,3 @@ async function main() {
   }
 }
 main();
-
-// async function deleteref() {
-//   console.log("deleting reference");
-//   try {
-//     await axios.delete(
-//       "https://api.github.com/repos/danacr/drone-cloudflared/git/refs/tags/2019.9.0",
-//       config
-//     );
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-// deleteref();
