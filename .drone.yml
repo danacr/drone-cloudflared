@@ -13,14 +13,8 @@ steps:
       - go build github.com/cloudflare/cloudflared/cmd/cloudflared
       - cp /go/bin/cloudflared .
       - tar -cf cloudflared-arm64-${DRONE_COMMIT_MESSAGE}.tar.gz cloudflared
-
-  - name: tag
-    image: docker:git # this image has git installed
-    tag:
-      commands:
-        - git pull https://github.com/danacr/drone-cloudflared
-        - git tag v{DRONE_COMMIT_MESSAGE}
-        - git push origin v{DRONE_COMMIT_MESSAGE}
+    when:
+      event: tag
 
   - name: publish
     image: plugins/github-release
