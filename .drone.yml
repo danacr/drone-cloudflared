@@ -1,6 +1,8 @@
 kind: pipeline
 name: arm64
 
+trigger:
+  event: [ tag ]
 platform:
   os: linux
   arch: arm64
@@ -13,8 +15,6 @@ steps:
       - go build github.com/cloudflare/cloudflared/cmd/cloudflared
       - cp /go/bin/cloudflared .
       - tar -cf cloudflared-arm64-${DRONE_COMMIT_MESSAGE}.tar.gz cloudflared
-    when:
-      event: tag
 
   - name: publish
     image: plugins/github-release
@@ -23,5 +23,3 @@ steps:
         from_secret: GITHUB
       title: ${DRONE_COMMIT_MESSAGE}
       files: cloudflared-arm64-${DRONE_COMMIT_MESSAGE}.tar.gz
-    when:
-      event: tag
