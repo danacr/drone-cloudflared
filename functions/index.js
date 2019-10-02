@@ -5,6 +5,7 @@ const replace = require("replace-in-file");
 const fs = require("fs");
 
 // accessToken = functions.config().git.key;
+
 accessToken = process.argv.slice(2);
 
 dan = "danacr/drone-cloudflared/tags";
