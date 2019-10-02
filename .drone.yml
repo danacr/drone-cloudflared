@@ -18,6 +18,7 @@ steps:
     image: docker:git # this image has git installed
     tag:
       commands:
+        - git pull https://github.com/danacr/drone-cloudflared
         - git tag v{DRONE_COMMIT_MESSAGE}
         - git push origin v{DRONE_COMMIT_MESSAGE}
 
