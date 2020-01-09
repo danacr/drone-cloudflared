@@ -9,7 +9,7 @@ platform:
 
 steps:
   - name: build
-    image: golang
+    image: golang:1.12.9-stretch
     commands:
       - go get github.com/cloudflare/cloudflared/cmd/cloudflared
       - go build github.com/cloudflare/cloudflared/cmd/cloudflared
