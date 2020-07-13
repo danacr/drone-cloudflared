@@ -2,7 +2,7 @@
 
 [![Build Status](https://cloud.drone.io/api/badges/danacr/drone-cloudflared/status.svg)](https://cloud.drone.io/danacr/drone-cloudflared)
 
-Current version: 2020.7.1
+Current version: 2020.7.3
 
 When trying to download cloudlfared for Arm64, I noticed that there were no binaries available:
 
