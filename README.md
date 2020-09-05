@@ -1,3 +1,7 @@
+## Update: Cloudflare started providing arm64 binaries!
+
+This repository is no longer needed since [184](https://github.com/cloudflare/cloudflared/pull/184) was merged. Please find the official releases [here](https://github.com/cloudflare/cloudflared/releases).
+
 # Cloudflared builds on drone.io
 
 [![Build Status](https://cloud.drone.io/api/badges/danacr/drone-cloudflared/status.svg)](https://cloud.drone.io/danacr/drone-cloudflared)
